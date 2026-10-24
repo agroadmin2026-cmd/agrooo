@@ -13,6 +13,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+type PestSeverity = "Ninguna" | "Baja" | "Media" | "Umbral de Daño Económico";
+type WeedPressure = "Controlada" | "Media (Focos aislados)" | "Alta (Requiere desecación)";
+
 export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefined }) {
   const store = useAgro();
   const [open, setOpen] = useState(false);
@@ -21,19 +24,18 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
   const [lotId, setLotId] = useState(store.lots[0]?.id || "l1");
   const [phenologicalStage, setPhenologicalStage] = useState("V4 (Cuatro hojas)");
   const [pestName, setPestName] = useState("");
-  const [pestSeverity, setPestSeverity] = useState<
-    "Ninguna" | "Baja" | "Media" | "Umbral de Daño Económico"
-  >("Baja");
-  const [weedPressure, setWeedPressure] = useState<
-    "Controlada" | "Media (Focos aislados)" | "Alta (Requiere desecación)"
-  >("Controlada");
+  const [pestSeverity, setPestSeverity] = useState<PestSeverity>("Baja");
+  const [weedPressure, setWeedPressure] = useState<WeedPressure>("Controlada");
   const [disease, setDisease] = useState("Ninguna");
   const [recommendedAction, setRecommendedAction] = useState("");
   const [supplyRecommendedId, setSupplyRecommendedId] = useState<string>("none");
   const [notes, setNotes] = useState("");
 
   const agrochemicals = store.supplies.filter(
-    (s) => s.category === "Insecticidas" || s.category === "Herbicidas" || s.category === "Fertilizantes"
+    (s) =>
+      s.category === "Insecticidas" ||
+      s.category === "Herbicidas" ||
+      s.category === "Fertilizantes",
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -75,21 +77,21 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full sm:max-w-lg p-4 sm:p-6 rounded-2xl sm:rounded-xl">
         <DialogHeader>
           <div className="flex items-center gap-2 text-primary">
             <div className="p-2 rounded-lg bg-primary/10">
               <Bug className="size-5" />
             </div>
-            <DialogTitle className="text-xl">Monitoreo y Sanidad Vegetal</DialogTitle>
+            <DialogTitle className="text-base sm:text-xl font-bold">Monitoreo y Sanidad Vegetal</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Scouting agronómico: fenología, umbrales de plagas y malezas por lote
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Fecha del Monitoreo
@@ -120,7 +122,7 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Estadío Fenológico
@@ -130,7 +132,9 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
                 required
                 placeholder="Ej: R1 Inicio Floración / V4 Vegetativo"
                 value={phenologicalStage}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setPhenologicalStage(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPhenologicalStage(e.target.value)
+                }
               />
             </div>
 
@@ -141,7 +145,9 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
               <select
                 className={selectClass}
                 value={weedPressure}
-                onChange={(e: ChangeEvent<HTMLSelectElement>) => setWeedPressure(e.target.value as any)}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setWeedPressure(e.target.value as WeedPressure)
+                }
               >
                 <option value="Controlada">🌱 Controlada (Lote limpio)</option>
                 <option value="Media (Focos aislados)">🌿 Media (Focos aislados)</option>
@@ -150,9 +156,11 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-card border border-border space-y-3">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-card border border-border space-y-2.5 sm:space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-foreground">Plaga Principal Identificada</span>
+              <span className="text-xs font-bold text-foreground">
+                Plaga Principal Identificada
+              </span>
               {pestSeverity === "Umbral de Daño Económico" ? (
                 <span className="flex items-center gap-1 text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
                   <AlertTriangle className="size-3" />
@@ -166,7 +174,7 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
                   Nombre de la Plaga
@@ -186,18 +194,22 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
                 <select
                   className={selectClass}
                   value={pestSeverity}
-                  onChange={(e: ChangeEvent<HTMLSelectElement>) => setPestSeverity(e.target.value as any)}
+                  onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                    setPestSeverity(e.target.value as PestSeverity)
+                  }
                 >
                   <option value="Ninguna">Ninguna (0 orugas/m)</option>
                   <option value="Baja">Baja (1 a 4 orugas/m)</option>
                   <option value="Media">Media (5 a 8 orugas/m)</option>
-                  <option value="Umbral de Daño Económico">⚠️ Umbral de Daño (&gt;8 orugas/m)</option>
+                  <option value="Umbral de Daño Económico">
+                    ⚠️ Umbral de Daño (&gt;8 orugas/m)
+                  </option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Enfermedad Foliar
@@ -217,7 +229,9 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
               <select
                 className={selectClass}
                 value={supplyRecommendedId}
-                onChange={(e: ChangeEvent<HTMLSelectElement>) => setSupplyRecommendedId(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                  setSupplyRecommendedId(e.target.value)
+                }
               >
                 <option value="none">Sin insumo requerido</option>
                 {agrochemicals.map((s) => (
@@ -253,11 +267,18 @@ export function ScoutingDialog({ trigger }: { trigger?: React.ReactNode | undefi
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button type="submit">Guardar Monitoreo</Button>
+            <Button type="submit" className="w-full sm:w-auto font-semibold">
+              Guardar Monitoreo
+            </Button>
           </div>
         </form>
       </DialogContent>

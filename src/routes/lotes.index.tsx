@@ -58,7 +58,9 @@ function Lotes() {
                     {l.name}
                   </h3>
                   <div className="flex items-center justify-between text-xs text-muted-foreground mt-0.5">
-                    <span>Cultivo: <b className="text-foreground">{l.crop}</b></span>
+                    <span>
+                      Cultivo: <b className="text-foreground">{l.crop}</b>
+                    </span>
                     {l.location && (
                       <span className="flex items-center gap-1 text-[11px]">
                         <MapPin className="size-3 text-muted-foreground" /> {l.location}
@@ -85,7 +87,7 @@ function Lotes() {
                               summary.expensesBs / l.hectares,
                               store.currencyMode,
                               store.exchangeRate,
-                              true
+                              true,
                             )
                           : "—"}
                       </p>
@@ -98,11 +100,17 @@ function Lotes() {
                       <span className="text-muted-foreground text-[11px]">Margen Bruto Total:</span>
                       <span
                         className={`font-bold num ${
-                          summary && summary.grossMarginBs >= 0 ? "text-success" : "text-destructive"
+                          summary && summary.grossMarginBs >= 0
+                            ? "text-success"
+                            : "text-destructive"
                         }`}
                       >
                         {summary
-                          ? formatMoney(summary.grossMarginBs, store.currencyMode, store.exchangeRate)
+                          ? formatMoney(
+                              summary.grossMarginBs,
+                              store.currencyMode,
+                              store.exchangeRate,
+                            )
                           : "—"}
                       </span>
                     </div>

@@ -77,7 +77,7 @@ function LotDetail() {
       />
 
       {/* KPI METRICS DE P&L Y RENDIMIENTO BIMONETARIO */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6">
         <StatCard
           label="Ingresos por Cosecha"
           value={formatMoney(summary?.revenueBs ?? 0, store.currencyMode, store.exchangeRate)}
@@ -127,7 +127,10 @@ function LotDetail() {
               </span>
             </div>
           </div>
-          <Link to="/lluvias" className="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline">
+          <Link
+            to="/lluvias"
+            className="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline"
+          >
             Ver todas →
           </Link>
         </Panel>
@@ -145,11 +148,15 @@ function LotDetail() {
                 {lotScoutings[0] ? lotScoutings[0].phenologicalStage : "Sin inspección"}
               </span>
               <span className="text-xs text-muted-foreground block">
-                Plaga: {lotScoutings[0]?.pestName || "Ninguna"} ({lotScoutings[0]?.pestSeverity || "Controlada"})
+                Plaga: {lotScoutings[0]?.pestName || "Ninguna"} (
+                {lotScoutings[0]?.pestSeverity || "Controlada"})
               </span>
             </div>
           </div>
-          <Link to="/monitoreo" className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
+          <Link
+            to="/monitoreo"
+            className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold hover:underline"
+          >
             Ver scouting →
           </Link>
         </Panel>
@@ -204,7 +211,7 @@ function LotDetail() {
                 {formatMoney(
                   (summary?.machineCostBs ?? 0) + (summary?.dieselCostBs ?? 0),
                   store.currencyMode,
-                  store.exchangeRate
+                  store.exchangeRate,
                 )}
               </span>
             </div>

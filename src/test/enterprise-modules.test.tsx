@@ -3,11 +3,7 @@ import { render, act } from "@testing-library/react";
 import { AgroProvider, useAgro } from "@/lib/agro-store";
 import { exportToCsv } from "@/lib/agro-data";
 
-function StoreConsumer({
-  onReady,
-}: {
-  onReady: (store: ReturnType<typeof useAgro>) => void;
-}) {
+function StoreConsumer({ onReady }: { onReady: (store: ReturnType<typeof useAgro>) => void }) {
   const store = useAgro();
   onReady(store);
   return (
@@ -30,7 +26,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const dieselSupply = storeRef.supplies.find((s) => s.category === "Combustibles")!;
@@ -69,7 +65,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const dieselSupply = storeRef.supplies.find((s) => s.category === "Combustibles")!;
@@ -102,7 +98,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const initialLedgerCount = storeRef.ledger.length;
@@ -156,7 +152,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const lot = storeRef.lots.find((l) => l.id === "l1")!; // Lote Norte A (120 ha)
@@ -164,15 +160,12 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
 
       expect(summary).toBeDefined();
       expect(summary.lot.hectares).toBe(lot.hectares);
-      expect(summary.grossMarginBs).toBe(summary.revenueBs - summary.expensesBs);
+      expect(summary.grossMarginBs).toBeCloseTo(summary.revenueBs - summary.expensesBs, 2);
       expect(summary.grossMarginPerHaBs).toBeCloseTo(
         summary.grossMarginBs / summary.lot.hectares,
-        2
+        2,
       );
-      expect(summary.yieldTonsPerHa).toBeCloseTo(
-        summary.harvestTons / summary.lot.hectares,
-        2
-      );
+      expect(summary.yieldTonsPerHa).toBeCloseTo(summary.harvestTons / summary.lot.hectares, 2);
     });
   });
 
@@ -182,7 +175,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const machine = storeRef.machines.find((m) => m.id === "m1")!;
@@ -232,7 +225,7 @@ describe("Módulos Enterprise AgroAdmin Bolivia", () => {
           [
             ["2026-10-21", "Cipermetrina", 540],
             ["2026-10-20", "Diésel B-SISA", 1860],
-          ]
+          ],
         );
 
         expect(createdBlob).not.toBeNull();

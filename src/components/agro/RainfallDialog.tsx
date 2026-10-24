@@ -13,6 +13,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+type SoilCondition =
+  | "Óptimo para labores"
+  | "Humedad adecuada"
+  | "Saturado / Anegado (Esperar 48h)"
+  | "Déficit hídrico";
+
 export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefined }) {
   const store = useAgro();
   const [open, setOpen] = useState(false);
@@ -21,9 +27,7 @@ export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefi
   const [lotId, setLotId] = useState<string>("general");
   const [millimeters, setMillimeters] = useState<number>(25);
   const [durationHours, setDurationHours] = useState<number>(2);
-  const [soilCondition, setSoilCondition] = useState<
-    "Óptimo para labores" | "Humedad adecuada" | "Saturado / Anegado (Esperar 48h)" | "Déficit hídrico"
-  >("Humedad adecuada");
+  const [soilCondition, setSoilCondition] = useState<SoilCondition>("Humedad adecuada");
   const [notes, setNotes] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,21 +60,21 @@ export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefi
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full sm:max-w-md p-4 sm:p-6 rounded-2xl sm:rounded-xl">
         <DialogHeader>
           <div className="flex items-center gap-2 text-primary">
             <div className="p-2 rounded-lg bg-primary/10">
               <CloudRain className="size-5" />
             </div>
-            <DialogTitle className="text-xl">Registro Pluviométrico</DialogTitle>
+            <DialogTitle className="text-base sm:text-xl font-bold">Registro Pluviométrico</DialogTitle>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             Control de precipitaciones y aptitud de suelo para maquinaria y siembra
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Fecha de Precipitación
@@ -102,7 +106,7 @@ export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefi
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Milímetros Caídos (mm)
@@ -148,11 +152,15 @@ export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefi
             <select
               className={selectClass}
               value={soilCondition}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => setSoilCondition(e.target.value as any)}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setSoilCondition(e.target.value as SoilCondition)
+              }
             >
               <option value="Humedad adecuada">💧 Humedad adecuada para siembra/desarrollo</option>
               <option value="Óptimo para labores">🚜 Suelo con piso óptimo para maquinaria</option>
-              <option value="Saturado / Anegado (Esperar 48h)">⚠️ Saturado / Anegado (Esperar 48 hrs)</option>
+              <option value="Saturado / Anegado (Esperar 48h)">
+                ⚠️ Saturado / Anegado (Esperar 48 hrs)
+              </option>
               <option value="Déficit hídrico">☀️ Déficit hídrico (Lluvia insuficiente)</option>
             </select>
           </div>
@@ -183,11 +191,18 @@ export function RainfallDialog({ trigger }: { trigger?: React.ReactNode | undefi
             </span>
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button type="submit">Guardar Lectura</Button>
+            <Button type="submit" className="w-full sm:w-auto font-semibold">
+              Guardar Lectura
+            </Button>
           </div>
         </form>
       </DialogContent>

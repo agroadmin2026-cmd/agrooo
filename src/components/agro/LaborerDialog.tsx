@@ -76,8 +76,8 @@ export function LaborerDialog({ trigger }: { trigger?: React.ReactNode | undefin
           </p>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-2">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Fecha de Jornal
@@ -134,7 +134,7 @@ export function LaborerDialog({ trigger }: { trigger?: React.ReactNode | undefin
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
             <div>
               <label className="text-xs font-semibold text-foreground/80 block mb-1">
                 Días / Jornales Trabajados
@@ -177,13 +177,9 @@ export function LaborerDialog({ trigger }: { trigger?: React.ReactNode | undefin
           <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">
             <div className="flex items-center gap-2">
               <DollarSign className="size-4 text-primary" />
-              <span className="text-xs font-medium text-muted-foreground">
-                Total Mano de Obra:
-              </span>
+              <span className="text-xs font-medium text-muted-foreground">Total Mano de Obra:</span>
             </div>
-            <span className="text-lg font-bold text-primary">
-              {currency(totalCostBs)}
-            </span>
+            <span className="text-base sm:text-lg font-bold text-primary">{currency(totalCostBs)}</span>
           </div>
 
           <div>
@@ -193,7 +189,9 @@ export function LaborerDialog({ trigger }: { trigger?: React.ReactNode | undefin
             <select
               className={selectClass}
               value={isPaid ? "pagado" : "pendiente"}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => setIsPaid(e.target.value === "pagado")}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                setIsPaid(e.target.value === "pagado")
+              }
             >
               <option value="pagado">✅ Pagado y liquidado en efectivo</option>
               <option value="pendiente">⏳ Pendiente de liquidación fin de semana</option>
@@ -212,11 +210,18 @@ export function LaborerDialog({ trigger }: { trigger?: React.ReactNode | undefin
             />
           </div>
 
-          <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setOpen(false)}
+              className="w-full sm:w-auto"
+            >
               Cancelar
             </Button>
-            <Button type="submit">Registrar Jornal</Button>
+            <Button type="submit" className="w-full sm:w-auto font-semibold">
+              Registrar Jornal
+            </Button>
           </div>
         </form>
       </DialogContent>

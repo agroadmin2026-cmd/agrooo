@@ -72,43 +72,77 @@ function Dashboard() {
 
   return (
     <>
-      <section className="bg-hero text-primary-foreground rounded-2xl p-6 md:p-8 mb-6 shadow-card">
-        <div className="flex items-center justify-between">
-          <p className="text-sm opacity-80">Octubre 2026 · Campaña de Verano · Santa Cruz, Bolivia</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary-foreground/20 font-semibold">
+      <section className="bg-hero text-primary-foreground rounded-2xl p-4 sm:p-6 md:p-8 mb-5 sm:mb-6 shadow-card">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <p className="text-xs sm:text-sm opacity-85 font-medium">
+            Octubre 2026 · Campaña de Verano · Santa Cruz, Bolivia
+          </p>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <span className="text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full bg-primary-foreground/20 font-semibold">
               Moneda: {currencyMode === "USD" ? `USD ($ · TC: ${exchangeRate})` : "Bolivianos (Bs)"}
             </span>
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold mt-2 tracking-tight">Estancia San José · AgroAdmin</h1>
-        <p className="opacity-80 mt-2 max-w-2xl text-sm">
-          Monitoreo integral en tiempo real: maquinaria ({machines.length} equipos), cisterna B-SISA ({number(currentDieselLiters)} L), entregas en silos ({totalHarvestTons.toFixed(1)} t), pluviómetro ({totalRainfallMm.toFixed(1)} mm) y mano de obra.
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mt-2 tracking-tight">
+          Estancia San José · AgroAdmin
+        </h1>
+        <p className="opacity-85 mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed">
+          Monitoreo integral en tiempo real: maquinaria ({machines.length} equipos), cisterna B-SISA
+          ({number(currentDieselLiters)} L), entregas en silos ({totalHarvestTons.toFixed(1)} t),
+          pluviómetro ({totalRainfallMm.toFixed(1)} mm) y mano de obra.
         </p>
-        <div className="flex flex-wrap gap-2.5 mt-5">
-          <UsageDialog trigger={<Button variant="secondary" className="gap-2 font-semibold"><Tractor className="size-4" /> Labor de maquinaria</Button>} />
-          <RainfallDialog trigger={<Button variant="secondary" className="gap-2 font-semibold"><CloudRain className="size-4" /> Registrar lluvia</Button>} />
-          <LedgerDialog trigger={<Button variant="secondary" className="gap-2 font-semibold"><Receipt className="size-4" /> Movimiento contable</Button>} />
-          <SupplyDialog trigger={<Button variant="secondary" className="gap-2 font-semibold"><PackagePlus className="size-4" /> Entrada a depósito</Button>} />
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-4 sm:mt-5">
+          <UsageDialog
+            trigger={
+              <Button variant="secondary" size="sm" className="w-full sm:w-auto gap-1.5 font-semibold text-xs sm:text-sm h-9">
+                <Tractor className="size-4 shrink-0" /> <span className="truncate">Labor maquinaria</span>
+              </Button>
+            }
+          />
+          <RainfallDialog
+            trigger={
+              <Button variant="secondary" size="sm" className="w-full sm:w-auto gap-1.5 font-semibold text-xs sm:text-sm h-9">
+                <CloudRain className="size-4 shrink-0" /> <span className="truncate">Registrar lluvia</span>
+              </Button>
+            }
+          />
+          <LedgerDialog
+            trigger={
+              <Button variant="secondary" size="sm" className="w-full sm:w-auto gap-1.5 font-semibold text-xs sm:text-sm h-9">
+                <Receipt className="size-4 shrink-0" /> <span className="truncate">Asiento contable</span>
+              </Button>
+            }
+          />
+          <SupplyDialog
+            trigger={
+              <Button variant="secondary" size="sm" className="w-full sm:w-auto gap-1.5 font-semibold text-xs sm:text-sm h-9">
+                <PackagePlus className="size-4 shrink-0" /> <span className="truncate">Entrada depósito</span>
+              </Button>
+            }
+          />
         </div>
       </section>
 
-      {/* KPI STAT CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* KPI STAT CARDS: 2 columnas en móvil para visualización compacta tipo app nativa */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         <StatCard
           label="Flujo de Caja Neto"
           value={formatMoney(inc - exp, currencyMode, exchangeRate)}
           icon={TrendingUp}
           tone={inc - exp >= 0 ? "success" : "danger"}
           hint={
-            <span className="flex gap-3">
-              <span className="text-success font-medium">↑ {formatMoney(inc, currencyMode, exchangeRate)}</span>
-              <span className="text-destructive font-medium">↓ {formatMoney(exp, currencyMode, exchangeRate)}</span>
+            <span className="flex flex-col sm:flex-row gap-0.5 sm:gap-2">
+              <span className="text-success font-medium">
+                ↑ {formatMoney(inc, currencyMode, exchangeRate)}
+              </span>
+              <span className="text-destructive font-medium">
+                ↓ {formatMoney(exp, currencyMode, exchangeRate)}
+              </span>
             </span>
           }
         />
         <StatCard
-          label="Horas de Maquinaria"
+          label="Horas Maquinaria"
           value={`${number(Math.round(hours * 10) / 10)} h`}
           icon={Clock}
           hint={`${usages.length} labores registradas`}
@@ -144,11 +178,15 @@ function Dashboard() {
                 {totalRainfallMm.toFixed(1)} mm acumulados
               </span>
               <span className="text-xs text-muted-foreground block">
-                Última lluvia: {rainfalls[0]?.date || "Sin registro"} ({rainfalls[0]?.millimeters || 0} mm)
+                Última lluvia: {rainfalls[0]?.date || "Sin registro"} (
+                {rainfalls[0]?.millimeters || 0} mm)
               </span>
             </div>
           </div>
-          <Link to="/lluvias" className="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline">
+          <Link
+            to="/lluvias"
+            className="text-xs text-sky-600 dark:text-sky-400 font-semibold hover:underline"
+          >
             Ver lluvias →
           </Link>
         </Panel>
@@ -163,14 +201,19 @@ function Dashboard() {
                 Sanidad Vegetal & Plagas
               </span>
               <span className="text-lg font-black text-foreground">
-                {criticalPests.length > 0 ? `${criticalPests.length} alertas críticas` : "Cultivos bajo control"}
+                {criticalPests.length > 0
+                  ? `${criticalPests.length} alertas críticas`
+                  : "Cultivos bajo control"}
               </span>
               <span className="text-xs text-muted-foreground block">
                 {scoutings.length} monitoreos fenológicos en campo
               </span>
             </div>
           </div>
-          <Link to="/monitoreo" className="text-xs text-amber-600 dark:text-amber-400 font-semibold hover:underline">
+          <Link
+            to="/monitoreo"
+            className="text-xs text-amber-600 dark:text-amber-400 font-semibold hover:underline"
+          >
             Ver scouting →
           </Link>
         </Panel>
@@ -183,7 +226,8 @@ function Dashboard() {
             <div>
               <h2 className="text-xl font-bold tracking-tight">Últimos Movimientos Contables</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Valores expresados en {currencyMode === "USD" ? "Dólares Americanos (USD)" : "Bolivianos (Bs)"}
+                Valores expresados en{" "}
+                {currencyMode === "USD" ? "Dólares Americanos (USD)" : "Bolivianos (Bs)"}
               </p>
             </div>
             <Link to="/contabilidad" className="text-xs text-primary font-semibold hover:underline">
@@ -195,10 +239,16 @@ function Dashboard() {
               <li key={e.id} className="flex items-center gap-3 py-3">
                 <div
                   className={`grid place-items-center size-8 rounded-full shrink-0 ${
-                    e.type === "ingreso" ? "bg-success/15 text-success" : "bg-destructive/10 text-destructive"
+                    e.type === "ingreso"
+                      ? "bg-success/15 text-success"
+                      : "bg-destructive/10 text-destructive"
                   }`}
                 >
-                  {e.type === "ingreso" ? <ArrowUpRight className="size-4" /> : <ArrowDownRight className="size-4" />}
+                  {e.type === "ingreso" ? (
+                    <ArrowUpRight className="size-4" />
+                  ) : (
+                    <ArrowDownRight className="size-4" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate text-foreground">{e.description}</p>
@@ -211,7 +261,8 @@ function Dashboard() {
                     e.type === "ingreso" ? "text-success" : "text-foreground"
                   }`}
                 >
-                  {e.type === "ingreso" ? "+" : "−"}{formatMoney(e.amount, currencyMode, exchangeRate)}
+                  {e.type === "ingreso" ? "+" : "−"}
+                  {formatMoney(e.amount, currencyMode, exchangeRate)}
                 </span>
               </li>
             ))}
@@ -231,7 +282,9 @@ function Dashboard() {
               </Link>
             </div>
             {low.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Todos los insumos sobre el stock mínimo.</p>
+              <p className="text-xs text-muted-foreground">
+                Todos los insumos sobre el stock mínimo.
+              </p>
             ) : (
               <ul className="space-y-3">
                 {low.map((s) => (
@@ -258,32 +311,50 @@ function Dashboard() {
           <Panel className="p-5 bg-muted/20">
             <h3 className="font-semibold text-sm mb-3">Módulos Especializados</h3>
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <Link to="/combustible" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/combustible"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <Fuel className="size-4 text-amber-500 mb-1" />
                 <span className="font-bold text-foreground block">Diésel B-SISA</span>
                 <span className="text-[10px] text-muted-foreground">Cisterna & Cupos</span>
               </Link>
-              <Link to="/cosecha" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/cosecha"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <Wheat className="size-4 text-emerald-500 mb-1" />
                 <span className="font-bold text-foreground block">Cosecha & Silos</span>
                 <span className="text-[10px] text-muted-foreground">Tickets de Balanza</span>
               </Link>
-              <Link to="/lluvias" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/lluvias"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <CloudRain className="size-4 text-sky-500 mb-1" />
                 <span className="font-bold text-foreground block">Pluviómetro</span>
                 <span className="text-[10px] text-muted-foreground">Lluvias (mm)</span>
               </Link>
-              <Link to="/jornales" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/jornales"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <Users className="size-4 text-purple-500 mb-1" />
                 <span className="font-bold text-foreground block">Mano de Obra</span>
                 <span className="text-[10px] text-muted-foreground">Jornales de Campo</span>
               </Link>
-              <Link to="/monitoreo" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/monitoreo"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <Bug className="size-4 text-red-500 mb-1" />
                 <span className="font-bold text-foreground block">Sanidad Vegetal</span>
                 <span className="text-[10px] text-muted-foreground">Plagas & Fenología</span>
               </Link>
-              <Link to="/lotes" className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block">
+              <Link
+                to="/lotes"
+                className="p-2.5 rounded-lg bg-background border hover:border-primary/50 transition-colors block"
+              >
                 <Map className="size-4 text-accent-foreground mb-1" />
                 <span className="font-bold text-foreground block">Lotes & P&L</span>
                 <span className="text-[10px] text-muted-foreground">Margen / ha</span>

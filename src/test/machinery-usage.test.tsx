@@ -5,11 +5,7 @@ import { UsageDialog } from "@/components/agro/UsageDialog";
 import { initialMachines, initialSupplies, initialLots } from "@/lib/agro-data";
 
 // Helper component to test useAgro store operations directly
-function StoreConsumer({
-  onReady,
-}: {
-  onReady: (store: ReturnType<typeof useAgro>) => void;
-}) {
+function StoreConsumer({ onReady }: { onReady: (store: ReturnType<typeof useAgro>) => void }) {
   const store = useAgro();
   onReady(store);
   return (
@@ -32,7 +28,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
     render(
       <AgroProvider>
         <StoreConsumer onReady={(s) => (storeRef = s)} />
-      </AgroProvider>
+      </AgroProvider>,
     );
 
     // Estado inicial
@@ -106,7 +102,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
     render(
       <AgroProvider>
         <StoreConsumer onReady={(s) => (storeRef = s)} />
-      </AgroProvider>
+      </AgroProvider>,
     );
 
     expect(() =>
@@ -117,7 +113,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
         operator: "Roberto",
         startHours: 4320,
         endHours: 4320, // Igual
-      })
+      }),
     ).toThrow("El horómetro final debe ser estrictamente mayor al horómetro inicial.");
 
     expect(() =>
@@ -128,7 +124,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
         operator: "Roberto",
         startHours: 4320,
         endHours: 4315, // Menor
-      })
+      }),
     ).toThrow("El horómetro final debe ser estrictamente mayor al horómetro inicial.");
   });
 
@@ -138,7 +134,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
     render(
       <AgroProvider>
         <StoreConsumer onReady={(s) => (storeRef = s)} />
-      </AgroProvider>
+      </AgroProvider>,
     );
 
     const supply = storeRef.supplies.find((s) => s.id === "s6")!; // Clorpirifós 48%, stock: 22
@@ -153,7 +149,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
         endHours: 3415,
         supplyId: supply.id,
         supplyQty: 50, // 50 > 22
-      })
+      }),
     ).toThrow(/Stock insuficiente de Clorpirifós 48%/);
   });
 
@@ -163,7 +159,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
     render(
       <AgroProvider>
         <StoreConsumer onReady={(s) => (storeRef = s)} />
-      </AgroProvider>
+      </AgroProvider>,
     );
 
     const machine = storeRef.machines.find((m) => m.id === "m3")!; // Case Axial-Flow 8250, 1980h, $120/h
@@ -196,7 +192,7 @@ describe("Módulo de Maquinaria, Uso y Descuento de Inventario", () => {
     render(
       <AgroProvider>
         <UsageDialog open={true} />
-      </AgroProvider>
+      </AgroProvider>,
     );
 
     // Validar presencia del título del diálogo

@@ -191,7 +191,7 @@ function Cosecha() {
           h.totalAmountBs,
           h.status,
         ];
-      })
+      }),
     );
     toast.success("Archivo CSV de cosecha descargado");
   };
@@ -213,50 +213,111 @@ function Cosecha() {
         }
       />
 
-      {/* KPI STAT CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+      {/* KPI STAT CARDS: 2 columnas en smartphone */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
         <StatCard
-          label="Volumen Total Cosechado"
+          label="Volumen Cosechado"
           value={`${number(Math.round(totalTons * 100) / 100)} t`}
           icon={Wheat}
           tone="primary"
-          hint={`${harvestDeliveries.length} viajes entregados`}
+          hint={`${harvestDeliveries.length} viajes en silos`}
         />
         <StatCard
-          label="Ingresos Brutos por Venta"
+          label="Venta Total"
           value={currency(totalRevenue)}
           icon={DollarSign}
           tone="success"
-          hint="Imputado a contabilidad"
+          hint="En contabilidad"
         />
         <StatCard
-          label="Precio Promedio por Tonelada"
+          label="Precio Promedio / t"
           value={currency(avgPricePerTon)}
           icon={Scale}
           tone="neutral"
-          hint="Tarifa ponderada en silos"
+          hint="Tarifa ponderada"
         />
         <StatCard
-          label="Destinos de Acopio Activos"
+          label="Silos Activos"
           value={`${new Set(harvestDeliveries.map((h) => h.siloDestination)).size} silos`}
           icon={Building2}
           tone="accent"
-          hint="ADM, Gravetal, Cargill, etc."
+          hint="Acopiadores"
         />
       </div>
 
-      {/* TABLA DE ENTREGAS DE COSECHA */}
+      {/* TABLA Y TARJETAS DE ENTREGAS DE COSECHA */}
       <Panel>
-        <div className="p-5 border-b flex items-center justify-between">
+        <div className="p-3.5 sm:p-5 border-b flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight">Registro de Entregas y Liquidaciones</h2>
+            <h2 className="text-base sm:text-xl font-semibold tracking-tight">
+              Registro de Entregas y Liquidaciones
+            </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Trazabilidad completa desde el lote de origen hasta el silo receptor con parámetros de calidad.
+              Trazabilidad desde el lote hasta el silo receptor con parámetros de calidad.
             </p>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Vista Móvil: Tarjetas táctiles */}
+        <div className="md:hidden p-3.5 space-y-3">
+          {harvestDeliveries.map((h) => {
+            const l = lots.find((x) => x.id === h.lotId);
+            return (
+              <div
+                key={h.id}
+                className="p-3.5 rounded-xl border border-border bg-card shadow-sm space-y-2.5"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span className="font-mono font-bold text-sm text-foreground block">
+                      Ticket #{h.ticketNumber}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{h.date}</span>
+                  </div>
+                  <Pill tone="success">{h.status}</Pill>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-border/50">
+                  <div className="flex items-center gap-1.5 font-medium text-foreground">
+                    <span>{l?.name ?? "Lote"}</span>
+                    <Pill tone="primary">{h.crop}</Pill>
+                  </div>
+                  <span className="font-semibold text-primary">{h.siloDestination}</span>
+                </div>
+
+                <div className="text-xs text-muted-foreground">
+                  <span>Chofer: <b>{h.driver}</b></span> · <span>Placa: <b>{h.truckPlate}</b></span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 bg-muted/40 p-2.5 rounded-lg text-xs">
+                  <div>
+                    <span className="text-muted-foreground block text-[11px]">Peso Neto</span>
+                    <span className="font-bold text-foreground">{number(h.netWeightKg)} kg</span>
+                    <span className="text-[10px] text-muted-foreground block mt-0.5">
+                      H: {h.moisturePercent}% · Imp: {h.impurityPercent}%
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-muted-foreground block text-[11px]">Liq. Pagable</span>
+                    <span className="font-extrabold text-foreground">{h.payableTons.toFixed(2)} t</span>
+                    <span className="text-xs font-black text-primary block mt-0.5">
+                      {currency(h.totalAmountBs)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {harvestDeliveries.length === 0 && (
+            <div className="py-8 text-center text-muted-foreground text-xs">
+              <AlertCircle className="size-6 mx-auto mb-2 opacity-50" />
+              No hay viajes ni entregas de cosecha registradas.
+            </div>
+          )}
+        </div>
+
+        {/* Vista Escritorio: Tabla completa */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/60 text-muted-foreground text-left">
               <tr>
@@ -278,7 +339,9 @@ function Cosecha() {
                 return (
                   <tr key={h.id} className="hover:bg-muted/40 transition-colors">
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <span className="font-mono font-bold text-foreground block">{h.ticketNumber}</span>
+                      <span className="font-mono font-bold text-foreground block">
+                        {h.ticketNumber}
+                      </span>
                       <span className="text-xs text-muted-foreground">{h.date}</span>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
@@ -299,7 +362,9 @@ function Cosecha() {
                     </td>
                     <td className="px-4 py-3 text-center whitespace-nowrap text-xs">
                       <span className="block font-medium">{h.moisturePercent}% H</span>
-                      <span className="text-[11px] text-muted-foreground">{h.impurityPercent}% Imp</span>
+                      <span className="text-[11px] text-muted-foreground">
+                        {h.impurityPercent}% Imp
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-right num whitespace-nowrap font-bold text-primary">
                       {h.payableTons.toFixed(2)} t
@@ -331,19 +396,20 @@ function Cosecha() {
 
       {/* MODAL REGISTRAR TICKET DE BALANZA */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[92vh] overflow-y-auto">
+        <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-2xl max-h-[92dvh] overflow-y-auto p-4 sm:p-6 rounded-2xl sm:rounded-xl">
           <DialogHeader>
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary">
               <Scale className="size-4" /> Balanza de Acopio · AgroAdmin Bolivia
             </div>
-            <DialogTitle>Registrar Ticket de Balanza de Silo</DialogTitle>
-            <DialogDescription>
-              Ingresa los datos del ticket de pesaje y laboratorio para liquidar el viaje y generar el ingreso contable.
+            <DialogTitle className="text-base sm:text-xl font-bold">Registrar Ticket de Balanza de Silo</DialogTitle>
+            <DialogDescription className="text-xs">
+              Ingresa los datos del ticket de pesaje y laboratorio para liquidar el viaje y generar
+              el ingreso contable.
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
               <Field label="N° Ticket de Silo">
                 <Input
                   value={ticketNumber}
@@ -355,11 +421,20 @@ function Cosecha() {
               </Field>
 
               <Field label="Fecha de entrega">
-                <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                <Input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                />
               </Field>
 
               <Field label="Lote de Origen">
-                <select className={selectClass} value={lotId} onChange={(e) => handleLotChange(e.target.value)}>
+                <select
+                  className={selectClass}
+                  value={lotId}
+                  onChange={(e) => handleLotChange(e.target.value)}
+                >
                   {lots.map((l) => (
                     <option key={l.id} value={l.id}>
                       {l.name} ({l.crop})
@@ -369,7 +444,7 @@ function Cosecha() {
               </Field>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
               <Field label="Silo / Acopiador">
                 <select
                   className={selectClass}
@@ -384,23 +459,31 @@ function Cosecha() {
                 </select>
               </Field>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Field label="Chofer de camión">
-                  <Input value={driver} onChange={(e) => setDriver(e.target.value)} placeholder="Ej. Juan Pérez" />
+                  <Input
+                    value={driver}
+                    onChange={(e) => setDriver(e.target.value)}
+                    placeholder="Ej. Juan Pérez"
+                  />
                 </Field>
                 <Field label="Placa de camión">
-                  <Input value={truckPlate} onChange={(e) => setTruckPlate(e.target.value)} placeholder="Ej. 3042-BTY" />
+                  <Input
+                    value={truckPlate}
+                    onChange={(e) => setTruckPlate(e.target.value)}
+                    placeholder="Ej. 3042-BTY"
+                  />
                 </Field>
               </div>
             </div>
 
             {/* SECCIÓN PESAJE */}
-            <div className="p-3.5 rounded-xl border bg-muted/30 space-y-3">
+            <div className="p-3 sm:p-3.5 rounded-xl border bg-muted/30 space-y-2.5 sm:space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Truck className="size-3.5 text-primary" /> Pesaje en Balanza
               </h4>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <Field label="Peso Bruto (kg)">
                   <Input
                     type="number"
@@ -437,12 +520,12 @@ function Cosecha() {
             </div>
 
             {/* SECCIÓN LABORATORIO Y MERMA */}
-            <div className="p-3.5 rounded-xl border bg-card/60 space-y-3">
+            <div className="p-3 sm:p-3.5 rounded-xl border bg-card/60 space-y-2.5 sm:space-y-3">
               <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                 <Scale className="size-3.5 text-primary" /> Análisis de Calidad y Merma
               </h4>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <Field label="Humedad (% Base 14%)">
                   <Input
                     type="number"
@@ -483,17 +566,25 @@ function Cosecha() {
                   <span className="font-bold text-destructive num">−{number(deductionKg)} kg</span>
                 </div>
                 <div className="p-2 rounded bg-background border">
-                  <span className="text-muted-foreground block text-[11px]">Peso Líquido Pagable:</span>
-                  <span className="font-bold text-foreground num">{number(payableWeightKg)} kg</span>
+                  <span className="text-muted-foreground block text-[11px]">
+                    Peso Líquido Pagable:
+                  </span>
+                  <span className="font-bold text-foreground num">
+                    {number(payableWeightKg)} kg
+                  </span>
                 </div>
-                <div className="p-2 rounded bg-primary/15 border border-primary/30">
-                  <span className="text-primary block text-[11px] font-semibold">Toneladas Pagables:</span>
-                  <span className="font-extrabold text-foreground text-sm num">{payableTons.toFixed(2)} t</span>
+                <div className="p-2 rounded bg-primary/15 border border-primary/30 col-span-2 sm:col-span-1">
+                  <span className="text-primary block text-[11px] font-semibold">
+                    Toneladas Pagables:
+                  </span>
+                  <span className="font-extrabold text-foreground text-sm num">
+                    {payableTons.toFixed(2)} t
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs flex justify-between items-center">
+            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
               <span className="font-medium text-emerald-800 dark:text-emerald-300">
                 Total a Liquidar por el Silo (Ingreso Contable):
               </span>
@@ -502,11 +593,16 @@ function Cosecha() {
               </b>
             </div>
 
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+            <DialogFooter className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+                className="w-full sm:w-auto"
+              >
                 Cancelar
               </Button>
-              <Button type="submit" className="font-semibold gap-1.5 shadow-md">
+              <Button type="submit" className="w-full sm:w-auto font-semibold gap-1.5 shadow-md">
                 <CheckCircle2 className="size-4" /> Liquidar y Generar Ingreso
               </Button>
             </DialogFooter>

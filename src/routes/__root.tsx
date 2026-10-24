@@ -11,6 +11,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { AgroProvider } from "@/lib/agro-store";
+import { AuthProvider, useAuth } from "@/lib/auth-context";
+import { LoginGate } from "@/components/auth/LoginGate";
 import { AppShell } from "@/components/agro/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
@@ -76,7 +78,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      {
+        name: "viewport",
+        content:
+          "width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover",
+      },
+      { name: "theme-color", content: "#1b4d3e" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { title: "AgroAdmin" },
       { name: "description", content: "Gestión agrícola y contabilidad" },
       { name: "author", content: "AgroAdmin" },
@@ -90,9 +99,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "manifest", href: "/manifest.json" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap",
+      },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "apple-touch-icon", href: "/favicon.ico" },
     ],
   }),
   shellComponent: RootShell,
@@ -115,16 +129,40 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function ProtectedApp() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#07130f] text-neutral-200">
+        <div className="flex flex-col items-center gap-3">
+          <div className="size-9 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+          <p className="text-xs text-neutral-400 font-mono tracking-widest uppercase">
+            Verificando credenciales AgroAdmin...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <LoginGate />;
+  }
+
+  return <AppShell />;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <AgroProvider>
-        <AppShell />
-        <Toaster richColors position="top-right" />
-      </AgroProvider>
+      <AuthProvider>
+        <AgroProvider>
+          <ProtectedApp />
+          <Toaster richColors position="top-right" />
+        </AgroProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

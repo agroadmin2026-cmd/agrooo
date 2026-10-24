@@ -18,6 +18,7 @@ import { Route as JornalesRouteImport } from './routes/jornales'
 import { Route as LluviasRouteImport } from './routes/lluvias'
 import { Route as MaquinariaRouteImport } from './routes/maquinaria'
 import { Route as MonitoreoRouteImport } from './routes/monitoreo'
+import { Route as VehiculosRouteImport } from './routes/vehiculos'
 import { Route as LotesIndexRouteImport } from './routes/lotes.index'
 import { Route as LotesLotIdRouteImport } from './routes/lotes.$lotId'
 
@@ -66,6 +67,11 @@ const MonitoreoRoute = MonitoreoRouteImport.update({
   path: '/monitoreo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VehiculosRoute = VehiculosRouteImport.update({
+  id: '/vehiculos',
+  path: '/vehiculos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LotesIndexRoute = LotesIndexRouteImport.update({
   id: '/lotes/',
   path: '/lotes/',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/lluvias': typeof LluviasRoute
   '/maquinaria': typeof MaquinariaRoute
   '/monitoreo': typeof MonitoreoRoute
+  '/vehiculos': typeof VehiculosRoute
   '/lotes/$lotId': typeof LotesLotIdRoute
   '/lotes/': typeof LotesIndexRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/lluvias': typeof LluviasRoute
   '/maquinaria': typeof MaquinariaRoute
   '/monitoreo': typeof MonitoreoRoute
+  '/vehiculos': typeof VehiculosRoute
   '/lotes/$lotId': typeof LotesLotIdRoute
   '/lotes': typeof LotesIndexRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/lluvias': typeof LluviasRoute
   '/maquinaria': typeof MaquinariaRoute
   '/monitoreo': typeof MonitoreoRoute
+  '/vehiculos': typeof VehiculosRoute
   '/lotes/$lotId': typeof LotesLotIdRoute
   '/lotes/': typeof LotesIndexRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/lluvias'
     | '/maquinaria'
     | '/monitoreo'
+    | '/vehiculos'
     | '/lotes/$lotId'
     | '/lotes/'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/lluvias'
     | '/maquinaria'
     | '/monitoreo'
+    | '/vehiculos'
     | '/lotes/$lotId'
     | '/lotes'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/lluvias'
     | '/maquinaria'
     | '/monitoreo'
+    | '/vehiculos'
     | '/lotes/$lotId'
     | '/lotes/'
   fileRoutesById: FileRoutesById
@@ -169,6 +181,7 @@ export interface RootRouteChildren {
   LluviasRoute: typeof LluviasRoute
   MaquinariaRoute: typeof MaquinariaRoute
   MonitoreoRoute: typeof MonitoreoRoute
+  VehiculosRoute: typeof VehiculosRoute
   LotesLotIdRoute: typeof LotesLotIdRoute
   LotesIndexRoute: typeof LotesIndexRoute
 }
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MonitoreoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vehiculos': {
+      id: '/vehiculos'
+      path: '/vehiculos'
+      fullPath: '/vehiculos'
+      preLoaderRoute: typeof VehiculosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lotes/': {
       id: '/lotes/'
       path: '/lotes'
@@ -265,6 +285,7 @@ const rootRouteChildren: RootRouteChildren = {
   LluviasRoute: LluviasRoute,
   MaquinariaRoute: MaquinariaRoute,
   MonitoreoRoute: MonitoreoRoute,
+  VehiculosRoute: VehiculosRoute,
   LotesLotIdRoute: LotesLotIdRoute,
   LotesIndexRoute: LotesIndexRoute,
 }

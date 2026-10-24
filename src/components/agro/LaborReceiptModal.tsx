@@ -10,15 +10,17 @@ import {
   Calendar,
   Building2,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Pill } from "./ui";
-import { currency, number, type MachineUsage, type Machine, type Lot, type Supply } from "@/lib/agro-data";
+import {
+  currency,
+  number,
+  type MachineUsage,
+  type Machine,
+  type Lot,
+  type Supply,
+} from "@/lib/agro-data";
 
 interface LaborReceiptModalProps {
   usage: MachineUsage | null;
@@ -52,27 +54,29 @@ export function LaborReceiptModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-xl p-0 gap-0 border-border/80 shadow-2xl bg-background">
-        <DialogHeader className="p-6 pb-4 bg-muted/40 border-b flex flex-row items-center justify-between">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-xl max-h-[92dvh] overflow-y-auto p-0 gap-0 border-border/80 shadow-2xl rounded-2xl bg-background">
+        <DialogHeader className="p-3.5 sm:p-6 pb-3 sm:pb-4 bg-muted/40 border-b flex flex-row items-center justify-between gap-2">
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary">
-              <Building2 className="size-3.5" /> AgroAdmin Bolivia · Estancia San José
+            <div className="flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary">
+              <Building2 className="size-3.5" /> AgroAdmin · Estancia San José
             </div>
-            <DialogTitle className="text-lg font-bold tracking-tight mt-0.5">
+            <DialogTitle className="text-base sm:text-lg font-bold tracking-tight mt-0.5">
               Comprobante de Labor Agrícola
             </DialogTitle>
           </div>
-          <Button size="sm" variant="outline" onClick={handlePrint} className="gap-1.5 text-xs">
+          <Button size="sm" variant="outline" onClick={handlePrint} className="gap-1.5 text-xs shrink-0">
             <Printer className="size-3.5" /> Imprimir
           </Button>
         </DialogHeader>
 
-        <div className="p-6 space-y-5 text-sm">
+        <div className="p-3.5 sm:p-6 space-y-3.5 sm:space-y-5 text-sm">
           {/* Metadata Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-3.5 rounded-lg border bg-card/60 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 p-3 rounded-lg border bg-card/60 text-xs">
             <div>
               <span className="text-muted-foreground block text-[11px]">N° Registro:</span>
-              <span className="font-mono font-bold text-foreground">LAB-{usage.id.toUpperCase()}</span>
+              <span className="font-mono font-bold text-foreground">
+                LAB-{usage.id.toUpperCase()}
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground block text-[11px]">Fecha de labor:</span>
@@ -80,7 +84,9 @@ export function LaborReceiptModal({
             </div>
             <div>
               <span className="text-muted-foreground block text-[11px]">Tipo de labor:</span>
-              <span className="font-semibold text-primary">{usage.laborType || "Labor mecanizada"}</span>
+              <span className="font-semibold text-primary">
+                {usage.laborType || "Labor mecanizada"}
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground block text-[11px]">Máquina:</span>
@@ -88,7 +94,9 @@ export function LaborReceiptModal({
             </div>
             <div>
               <span className="text-muted-foreground block text-[11px]">Lote destino:</span>
-              <span className="font-medium text-foreground">{lot?.name ?? "—"} ({lot?.crop})</span>
+              <span className="font-medium text-foreground">
+                {lot?.name ?? "—"} ({lot?.crop})
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground block text-[11px]">Operador responsable:</span>
@@ -130,24 +138,32 @@ export function LaborReceiptModal({
               </thead>
               <tbody className="divide-y">
                 <tr>
-                  <td className="px-3 py-2.5 font-medium">
-                    Horas de máquina ({machine?.name})
-                  </td>
+                  <td className="px-3 py-2.5 font-medium">Horas de máquina ({machine?.name})</td>
                   <td className="px-3 py-2.5 text-right num">{hours} h</td>
-                  <td className="px-3 py-2.5 text-right num">{currency(machine?.hourlyCost ?? 0)}</td>
-                  <td className="px-3 py-2.5 text-right font-semibold num">{currency(machineCost)}</td>
+                  <td className="px-3 py-2.5 text-right num">
+                    {currency(machine?.hourlyCost ?? 0)}
+                  </td>
+                  <td className="px-3 py-2.5 text-right font-semibold num">
+                    {currency(machineCost)}
+                  </td>
                 </tr>
                 {supply && usage.supplyQty && (
                   <tr>
                     <td className="px-3 py-2.5">
                       <span className="font-medium">{supply.name}</span>
-                      <span className="text-[10px] text-muted-foreground block">{supply.category}</span>
+                      <span className="text-[10px] text-muted-foreground block">
+                        {supply.category}
+                      </span>
                     </td>
                     <td className="px-3 py-2.5 text-right num">
                       {usage.supplyQty} {supply.unit}
                     </td>
-                    <td className="px-3 py-2.5 text-right num">{currency(supply.unitCost, true)}</td>
-                    <td className="px-3 py-2.5 text-right font-semibold num">{currency(supplyCost)}</td>
+                    <td className="px-3 py-2.5 text-right num">
+                      {currency(supply.unitCost, true)}
+                    </td>
+                    <td className="px-3 py-2.5 text-right font-semibold num">
+                      {currency(supplyCost)}
+                    </td>
                   </tr>
                 )}
                 {usage.dieselLiters && (
@@ -160,13 +176,18 @@ export function LaborReceiptModal({
                     </td>
                     <td className="px-3 py-2.5 text-right num">{usage.dieselLiters} L</td>
                     <td className="px-3 py-2.5 text-right num">Bs 3,72</td>
-                    <td className="px-3 py-2.5 text-right font-semibold num">{currency(dieselEstimatedCost)}</td>
+                    <td className="px-3 py-2.5 text-right font-semibold num">
+                      {currency(dieselEstimatedCost)}
+                    </td>
                   </tr>
                 )}
               </tbody>
               <tfoot className="bg-muted/40 font-bold border-t">
                 <tr>
-                  <td colSpan={3} className="px-3 py-2.5 text-right uppercase tracking-wider text-[11px]">
+                  <td
+                    colSpan={3}
+                    className="px-3 py-2.5 text-right uppercase tracking-wider text-[11px]"
+                  >
                     Costo Total Operativo:
                   </td>
                   <td className="px-3 py-2.5 text-right text-sm text-primary num font-extrabold">
@@ -189,7 +210,9 @@ export function LaborReceiptModal({
 
           {usage.notes && (
             <div className="p-3 rounded-lg bg-muted/30 border text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground block mb-0.5">Observaciones agronómicas:</span>
+              <span className="font-semibold text-foreground block mb-0.5">
+                Observaciones agronómicas:
+              </span>
               <p className="italic">{usage.notes}</p>
             </div>
           )}

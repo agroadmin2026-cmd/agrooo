@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bug, AlertTriangle, ShieldCheck, Download, MapPin, Sparkles, ArrowRight, Sprout } from "lucide-react";
+import {
+  Bug,
+  AlertTriangle,
+  ShieldCheck,
+  Download,
+  MapPin,
+  Sparkles,
+  ArrowRight,
+  Sprout,
+} from "lucide-react";
 import { useAgro } from "@/lib/agro-store";
 import { exportToCsv } from "@/lib/agro-data";
 import { Button } from "@/components/ui/button";
@@ -24,12 +33,10 @@ function MonitoreoPage() {
   const store = useAgro();
 
   const criticalPests = store.scoutings.filter(
-    (s) => s.pestSeverity === "Umbral de Daño Económico"
+    (s) => s.pestSeverity === "Umbral de Daño Económico",
   );
   const mediumPests = store.scoutings.filter((s) => s.pestSeverity === "Media");
-  const highWeeds = store.scoutings.filter(
-    (s) => s.weedPressure === "Alta (Requiere desecación)"
-  );
+  const highWeeds = store.scoutings.filter((s) => s.weedPressure === "Alta (Requiere desecación)");
 
   const handleExportCsv = () => {
     exportToCsv(
@@ -58,7 +65,7 @@ function MonitoreoPage() {
           s.recommendedAction,
           s.notes || "",
         ];
-      })
+      }),
     );
   };
 
@@ -86,7 +93,8 @@ function MonitoreoPage() {
               Umbral de Daño Económico
             </span>
             <span className="text-3xl font-black text-amber-600 dark:text-amber-400">
-              {criticalPests.length} <span className="text-lg font-bold text-muted-foreground">lotes</span>
+              {criticalPests.length}{" "}
+              <span className="text-lg font-bold text-muted-foreground">lotes</span>
             </span>
             <span className="text-xs text-amber-700 dark:text-amber-300 font-medium block mt-1">
               Requiere aplicación urgente
@@ -103,7 +111,8 @@ function MonitoreoPage() {
               Infestación Moderada
             </span>
             <span className="text-3xl font-black text-foreground">
-              {mediumPests.length} <span className="text-lg font-bold text-muted-foreground">lotes</span>
+              {mediumPests.length}{" "}
+              <span className="text-lg font-bold text-muted-foreground">lotes</span>
             </span>
             <span className="text-xs text-muted-foreground block mt-1">
               En monitoreo cada 48 hrs
@@ -136,12 +145,8 @@ function MonitoreoPage() {
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
               Inspecciones Realizadas
             </span>
-            <span className="text-3xl font-black text-foreground">
-              {store.scoutings.length}
-            </span>
-            <span className="text-xs text-muted-foreground block mt-1">
-              Campaña Verano 2026/27
-            </span>
+            <span className="text-3xl font-black text-foreground">{store.scoutings.length}</span>
+            <span className="text-xs text-muted-foreground block mt-1">Campaña Verano 2026/27</span>
           </div>
           <div className="p-3 rounded-xl bg-primary/10 text-primary">
             <ShieldCheck className="size-6" />
@@ -154,7 +159,9 @@ function MonitoreoPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Bug className="size-5 text-primary" />
-            <h2 className="text-lg font-bold tracking-tight">Historial de Scouting y Diagnósticos Agronómicos</h2>
+            <h2 className="text-lg font-bold tracking-tight">
+              Historial de Scouting y Diagnósticos Agronómicos
+            </h2>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
             Total inspecciones: {store.scoutings.length}
@@ -206,16 +213,14 @@ function MonitoreoPage() {
                           s.pestSeverity === "Umbral de Daño Económico"
                             ? "warning"
                             : s.pestSeverity === "Media"
-                            ? "primary"
-                            : "success"
+                              ? "primary"
+                              : "success"
                         }
                       >
                         {s.pestSeverity}
                       </Pill>
                     </td>
-                    <td className="py-3 px-3 text-xs text-muted-foreground">
-                      {s.weedPressure}
-                    </td>
+                    <td className="py-3 px-3 text-xs text-muted-foreground">{s.weedPressure}</td>
                     <td className="py-3 px-3 text-xs font-medium text-foreground max-w-xs">
                       {s.recommendedAction}
                     </td>

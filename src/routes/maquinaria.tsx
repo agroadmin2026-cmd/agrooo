@@ -51,7 +51,7 @@ function Maquinaria() {
   const [filterMachine, setFilterMachine] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedMachineForDialog, setSelectedMachineForDialog] = useState<string | undefined>(
-    undefined
+    undefined,
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [receiptUsage, setReceiptUsage] = useState<MachineUsage | null>(null);
@@ -92,9 +92,10 @@ function Maquinaria() {
 
   const selectedReceiptMachine = receiptUsage ? getMachine(receiptUsage.machineId) : undefined;
   const selectedReceiptLot = receiptUsage ? getLot(receiptUsage.lotId) : undefined;
-  const selectedReceiptSupply = receiptUsage && receiptUsage.supplyId
-    ? supplies.find((s) => s.id === receiptUsage.supplyId)
-    : undefined;
+  const selectedReceiptSupply =
+    receiptUsage && receiptUsage.supplyId
+      ? supplies.find((s) => s.id === receiptUsage.supplyId)
+      : undefined;
 
   return (
     <>
@@ -114,35 +115,35 @@ function Maquinaria() {
         }
       />
 
-      {/* KPI STAT CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+      {/* KPI STAT CARDS: 2 columnas en smartphone */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
         <StatCard
-          label="Horas de labor acumuladas"
+          label="Horas de Labor"
           value={`${number(Math.round(totalHoursWorked * 10) / 10)} h`}
           icon={Clock}
           tone="primary"
-          hint={`${usages.length} labores registradas`}
+          hint={`${usages.length} labores`}
         />
         <StatCard
-          label="Costo operativo total"
+          label="Costo Operativo"
           value={currency(totalOperatingExpense)}
           icon={Tractor}
           tone="neutral"
-          hint="Imputado a libro contable"
+          hint="En contabilidad"
         />
         <StatCard
-          label="Diésel Oíl consumido"
+          label="Diésel Consumido"
           value={`${number(totalDieselLiters)} L`}
           icon={Fuel}
           tone="accent"
-          hint={`Ref. ${currency(totalDieselLiters * 3.72)} (B-Sisa)`}
+          hint="Subvencionado"
         />
         <StatCard
-          label="Parque de maquinaria"
+          label="Parque Maquinaria"
           value={`${operativeCount} / ${machines.length}`}
           icon={Wrench}
           tone={operativeCount === machines.length ? "success" : "warning"}
-          hint={`${operativeCount} unidades operativas`}
+          hint={`${operativeCount} operativas`}
         />
       </div>
 
@@ -151,12 +152,21 @@ function Maquinaria() {
         {machines.map((m) => {
           const serviceInterval = m.serviceIntervalHours ?? 250;
           const hoursSinceLastService = m.hourmeter - (m.lastServiceHourmeter ?? 0);
-          const hoursUntilService = Math.max(0, serviceInterval - (hoursSinceLastService % serviceInterval));
-          const serviceProgress = Math.min(100, Math.round(((serviceInterval - hoursUntilService) / serviceInterval) * 100));
+          const hoursUntilService = Math.max(
+            0,
+            serviceInterval - (hoursSinceLastService % serviceInterval),
+          );
+          const serviceProgress = Math.min(
+            100,
+            Math.round(((serviceInterval - hoursUntilService) / serviceInterval) * 100),
+          );
           const isUrgent = hoursUntilService <= 25;
 
           return (
-            <Panel key={m.id} className="p-5 flex flex-col justify-between hover:border-primary/40 transition-all">
+            <Panel
+              key={m.id}
+              className="p-5 flex flex-col justify-between hover:border-primary/40 transition-all"
+            >
               <div>
                 <div className="flex items-start justify-between">
                   <div className="grid place-items-center size-10 rounded-lg bg-accent/25 text-accent-foreground">
@@ -166,7 +176,8 @@ function Maquinaria() {
                 </div>
                 <h3 className="font-semibold text-lg mt-3">{m.name}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {m.type} · <span className="font-medium text-foreground">{currency(m.hourlyCost)}/h</span>
+                  {m.type} ·{" "}
+                  <span className="font-medium text-foreground">{currency(m.hourlyCost)}/h</span>
                 </p>
               </div>
 
@@ -176,7 +187,8 @@ function Maquinaria() {
                   <p className="text-xs text-muted-foreground">Horómetro actual</p>
                   <div className="flex items-baseline justify-between">
                     <p className="text-2xl font-bold num tracking-tight text-foreground">
-                      {number(m.hourmeter)} <span className="text-sm font-normal text-muted-foreground">h</span>
+                      {number(m.hourmeter)}{" "}
+                      <span className="text-sm font-normal text-muted-foreground">h</span>
                     </p>
                     <span className="text-[11px] text-muted-foreground flex items-center gap-1">
                       <CheckCircle className="size-3 text-emerald-500" /> Sincronizado
@@ -190,7 +202,9 @@ function Maquinaria() {
                     <span className="text-muted-foreground flex items-center gap-1">
                       <Wrench className="size-3 text-primary" /> Service ({serviceInterval}h):
                     </span>
-                    <span className={`font-semibold ${isUrgent ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
+                    <span
+                      className={`font-semibold ${isUrgent ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}
+                    >
                       {hoursUntilService === 0 ? "¡Toca ahora!" : `En ${hoursUntilService} h`}
                     </span>
                   </div>
@@ -223,30 +237,31 @@ function Maquinaria() {
       </div>
 
       {/* TABLA DE HISTORIAL DE USO */}
+      {/* HISTORIAL DE USO Y LABORES */}
       <Panel className="mt-6">
-        <div className="p-5 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="p-3.5 sm:p-5 border-b flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight">Historial de uso y labores</h2>
+            <h2 className="text-base sm:text-xl font-semibold tracking-tight">Historial de uso y labores</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Registro con horómetros, horas computadas, insumos aplicados y costos operativos devengados en Bolivianos.
+              Registro con horómetros, horas computadas e imputación contable.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
               <Input
                 placeholder="Buscar por operador, lote o labor…"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 w-full sm:w-64 text-xs"
+                className="pl-9 w-full sm:w-64 text-xs h-9"
               />
             </div>
 
             <div className="flex items-center gap-2">
               <Filter className="size-4 text-muted-foreground shrink-0" />
               <select
-                className={`${selectClass} sm:w-44 text-xs`}
+                className={`${selectClass} w-full sm:w-44 text-xs h-9`}
                 value={filterMachine}
                 onChange={(e) => setFilterMachine(e.target.value)}
               >
@@ -261,7 +276,85 @@ function Maquinaria() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Vista Móvil: Tarjetas táctiles de labores */}
+        <div className="md:hidden p-3.5 space-y-3">
+          {filteredUsages.map((u) => {
+            const m = getMachine(u.machineId);
+            const l = getLot(u.lotId);
+            const s = supplies.find((x) => x.id === u.supplyId);
+            const hours = Math.round((u.endHours - u.startHours) * 100) / 100;
+            const cost = u.operatingCost ?? hours * (m?.hourlyCost ?? 0);
+
+            return (
+              <div
+                key={u.id}
+                className="p-3.5 rounded-xl border border-border bg-card shadow-sm space-y-2.5"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span className="font-bold text-sm text-foreground flex items-center gap-1.5">
+                      <Sparkles className="size-3.5 text-primary shrink-0" />
+                      {u.laborType || "Labor mecanizada"}
+                    </span>
+                    <span className="text-xs text-muted-foreground block">{u.date}</span>
+                  </div>
+                  <Pill tone="primary">+{hours} h</Pill>
+                </div>
+
+                <div className="flex items-center justify-between text-xs pt-1 border-t border-border/50">
+                  <span className="font-semibold text-foreground">{m?.name}</span>
+                  <div className="flex items-center gap-1 text-muted-foreground">
+                    <span>{l?.name ?? "Lote"}</span>
+                    {l && <Pill tone="neutral">{l.crop}</Pill>}
+                  </div>
+                </div>
+
+                <div className="text-xs text-muted-foreground">
+                  <span>Operador: <b>{u.operator}</b></span> ·{" "}
+                  <span className="font-mono">Horómetro: {number(u.startHours)} → {number(u.endHours)}</span>
+                </div>
+
+                {s && (
+                  <div className="text-xs text-muted-foreground bg-muted/30 p-2 rounded-lg">
+                    Insumo: <b className="text-foreground">{s.name}</b> ({u.supplyQty} {s.unit})
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between bg-muted/40 p-2.5 rounded-lg text-xs">
+                  <div>
+                    {u.dieselLiters && (
+                      <span className="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1">
+                        <Fuel className="size-3" /> {u.dieselLiters} L diésel
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[11px] text-muted-foreground block">Costo Operativo</span>
+                    <span className="text-base font-black text-foreground">{currency(cost)}</span>
+                  </div>
+                </div>
+
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full text-xs font-semibold h-8 gap-1.5"
+                  onClick={() => setReceiptUsage(u)}
+                >
+                  <Receipt className="size-3.5" /> Ver Ficha de Labor
+                </Button>
+              </div>
+            );
+          })}
+          {filteredUsages.length === 0 && (
+            <div className="py-8 text-center text-muted-foreground text-xs">
+              <AlertCircle className="size-6 mx-auto mb-2 opacity-50" />
+              No se encontraron registros de labor.
+            </div>
+          )}
+        </div>
+
+        {/* Vista Escritorio: Tabla completa */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="bg-muted/60 text-muted-foreground text-left">
               <tr>
@@ -288,22 +381,25 @@ function Maquinaria() {
 
                 return (
                   <tr key={u.id} className="hover:bg-muted/40 transition-colors">
-                    <td className="px-4 py-3 num whitespace-nowrap text-muted-foreground">{u.date}</td>
+                    <td className="px-4 py-3 num whitespace-nowrap text-muted-foreground">
+                      {u.date}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className="font-semibold text-foreground flex items-center gap-1.5">
-                        <Sparkles className="size-3 text-primary" /> {u.laborType || "Labor mecanizada"}
+                        <Sparkles className="size-3 text-primary" />{" "}
+                        {u.laborType || "Labor mecanizada"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-medium whitespace-nowrap">
-                      {m?.name ?? "—"}
-                    </td>
+                    <td className="px-4 py-3 font-medium whitespace-nowrap">{m?.name ?? "—"}</td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         <span>{l?.name ?? "—"}</span>
                         {l && <Pill tone="neutral">{l.crop}</Pill>}
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap font-medium text-foreground">{u.operator}</td>
+                    <td className="px-4 py-3 whitespace-nowrap font-medium text-foreground">
+                      {u.operator}
+                    </td>
                     <td className="px-4 py-3 num whitespace-nowrap text-muted-foreground text-xs font-mono">
                       {number(u.startHours)} → {number(u.endHours)}
                     </td>
@@ -334,7 +430,9 @@ function Maquinaria() {
                         <div className="flex items-center gap-1.5">
                           <Pill tone="success">{s.category}</Pill>
                           <span className="text-foreground font-medium">{s.name}</span>
-                          <span>({u.supplyQty} {s.unit})</span>
+                          <span>
+                            ({u.supplyQty} {s.unit})
+                          </span>
                         </div>
                       ) : (
                         <span className="text-muted-foreground/60">—</span>

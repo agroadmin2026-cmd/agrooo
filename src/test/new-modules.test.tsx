@@ -3,11 +3,7 @@ import { render, act } from "@testing-library/react";
 import { AgroProvider, useAgro } from "@/lib/agro-store";
 import { formatMoney } from "@/lib/agro-data";
 
-function StoreConsumer({
-  onReady,
-}: {
-  onReady: (store: ReturnType<typeof useAgro>) => void;
-}) {
+function StoreConsumer({ onReady }: { onReady: (store: ReturnType<typeof useAgro>) => void }) {
   const store = useAgro();
   onReady(store);
   return (
@@ -32,7 +28,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       // En modo Bs por defecto (TC 6.96)
@@ -67,7 +63,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const initialCount = storeRef.rainfalls.length;
@@ -97,7 +93,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const initialLaborersCount = storeRef.laborers.length;
@@ -146,7 +142,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const lot = storeRef.lots.find((l) => l.id === "l1")!;
@@ -170,10 +166,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       expect(newSummary.laborCostBs).toBe(prevSummary.laborCostBs + 1000);
       expect(newSummary.expensesBs).toBe(prevExpenses + 1000);
       expect(newSummary.grossMarginBs).toBe(prevSummary.grossMarginBs - 1000);
-      expect(newSummary.grossMarginPerHaBs).toBeCloseTo(
-        newSummary.grossMarginBs / lot.hectares,
-        2
-      );
+      expect(newSummary.grossMarginPerHaBs).toBeCloseTo(newSummary.grossMarginBs / lot.hectares, 2);
     });
   });
 
@@ -183,7 +176,7 @@ describe("Nuevas Funcionalidades de Alta Utilidad AgroAdmin Bolivia", () => {
       render(
         <AgroProvider>
           <StoreConsumer onReady={(s) => (storeRef = s)} />
-        </AgroProvider>
+        </AgroProvider>,
       );
 
       const initialCount = storeRef.scoutings.length;

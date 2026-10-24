@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CloudRain, Droplets, Calendar, Download, AlertTriangle, CheckCircle2, MapPin } from "lucide-react";
+import {
+  CloudRain,
+  Droplets,
+  Calendar,
+  Download,
+  AlertTriangle,
+  CheckCircle2,
+  MapPin,
+} from "lucide-react";
 import { useAgro } from "@/lib/agro-store";
 import { exportToCsv } from "@/lib/agro-data";
 import { Button } from "@/components/ui/button";
@@ -30,7 +38,14 @@ function LluviasPage() {
   const handleExportCsv = () => {
     exportToCsv(
       "pluviometro_lluvias",
-      ["Fecha", "Ubicación / Lote", "Precipitación (mm)", "Duración (h)", "Condición del Suelo", "Observaciones"],
+      [
+        "Fecha",
+        "Ubicación / Lote",
+        "Precipitación (mm)",
+        "Duración (h)",
+        "Condición del Suelo",
+        "Observaciones",
+      ],
       store.rainfalls.map((r) => {
         const lot = r.lotId ? store.lots.find((l) => l.id === r.lotId)?.name : "Estación Central";
         return [
@@ -41,7 +56,7 @@ function LluviasPage() {
           r.soilCondition,
           r.notes || "",
         ];
-      })
+      }),
     );
   };
 
@@ -69,7 +84,8 @@ function LluviasPage() {
               Acumulado del Mes
             </span>
             <span className="text-3xl font-black text-sky-600 dark:text-sky-400">
-              {totalMonthlyMm.toFixed(1)} <span className="text-lg font-bold text-muted-foreground">mm</span>
+              {totalMonthlyMm.toFixed(1)}{" "}
+              <span className="text-lg font-bold text-muted-foreground">mm</span>
             </span>
             <span className="text-xs text-muted-foreground block mt-1">
               En {store.rainfalls.length} eventos registrados
@@ -86,11 +102,10 @@ function LluviasPage() {
               Promedio por Lluvia
             </span>
             <span className="text-3xl font-black text-foreground">
-              {avgMmPerRain.toFixed(1)} <span className="text-lg font-bold text-muted-foreground">mm</span>
+              {avgMmPerRain.toFixed(1)}{" "}
+              <span className="text-lg font-bold text-muted-foreground">mm</span>
             </span>
-            <span className="text-xs text-muted-foreground block mt-1">
-              Régimen moderado
-            </span>
+            <span className="text-xs text-muted-foreground block mt-1">Régimen moderado</span>
           </div>
           <div className="p-3 rounded-xl bg-primary/10 text-primary">
             <Droplets className="size-6" />
@@ -137,7 +152,9 @@ function LluviasPage() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <CloudRain className="size-5 text-primary" />
-            <h2 className="text-lg font-bold tracking-tight">Lecturas Pluviométricas Registradas</h2>
+            <h2 className="text-lg font-bold tracking-tight">
+              Lecturas Pluviométricas Registradas
+            </h2>
           </div>
           <span className="text-xs text-muted-foreground font-medium">
             Total lecturas: {store.rainfalls.length}
@@ -167,7 +184,9 @@ function LluviasPage() {
                         <div className="flex items-center gap-1.5 font-semibold text-foreground">
                           <MapPin className="size-3.5 text-primary" />
                           <span>{targetLot.name}</span>
-                          <span className="text-xs text-muted-foreground font-normal">({targetLot.crop})</span>
+                          <span className="text-xs text-muted-foreground font-normal">
+                            ({targetLot.crop})
+                          </span>
                         </div>
                       ) : (
                         <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
@@ -191,8 +210,8 @@ function LluviasPage() {
                           r.soilCondition.includes("Anegado")
                             ? "warning"
                             : r.soilCondition.includes("Déficit")
-                            ? "neutral"
-                            : "success"
+                              ? "neutral"
+                              : "success"
                         }
                       >
                         {r.soilCondition}
