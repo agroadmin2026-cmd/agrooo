@@ -12,6 +12,7 @@ import {
   Fuel,
   Receipt,
   Sparkles,
+  Gauge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,15 +21,16 @@ import { currency, number, type MachineStatus, type MachineUsage } from "@/lib/a
 import { PageHeader, Panel, Pill, StatCard, selectClass } from "@/components/agro/ui";
 import { UsageDialog } from "@/components/agro/UsageDialog";
 import { LaborReceiptModal } from "@/components/agro/LaborReceiptModal";
+import { HarvesterDiagnosticsPanel } from "@/components/agro/HarvesterDiagnosticsPanel";
 
 export const Route = createFileRoute("/maquinaria")({
   head: () => ({
     meta: [
-      { title: "Maquinaria, Labores y Horómetros · AgroAdmin Bolivia" },
+      { title: "Maquinaria, Labores, Horómetros & Diagnóstico de Cosechadoras · AgroAdmin Bolivia" },
       {
         name: "description",
         content:
-          "Control de horómetros en tiempo real, registro de labores agrícolas, descuento reactivo de insumos y diésel, e imputación contable en Bolivianos (Bs).",
+          "Control de horómetros en tiempo real, registro de labores agrícolas, telemetría y horas de filtro de aceite en cosechadoras, e imputación contable en Bolivianos (Bs).",
       },
       { property: "og:title", content: "Maquinaria y Labores · AgroAdmin Bolivia" },
       {
@@ -48,8 +50,10 @@ const tone: Record<MachineStatus, "success" | "warning" | "danger"> = {
 
 function Maquinaria() {
   const { machines, usages, lots, supplies } = useAgro();
+  const [activeView, setActiveView] = useState<"fleet" | "harvester_diagnostics">("fleet");
   const [filterMachine, setFilterMachine] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
+
   const [selectedMachineForDialog, setSelectedMachineForDialog] = useState<string | undefined>(
     undefined,
   );
@@ -100,23 +104,53 @@ function Maquinaria() {
   return (
     <>
       <PageHeader
-        title="Maquinaria y Horas"
-        subtitle="Control de horómetros, mantenimiento preventivo y costos operativos en Bolivianos (Bs)"
+        title="Maquinaria, Labores & Cosechadoras"
+        subtitle="Control de horómetros, telemetría de cosechadoras, filtro de aceite y costos operativos en Bs"
         actions={
-          <Button
-            onClick={() => {
-              setSelectedMachineForDialog(undefined);
-              setIsDialogOpen(true);
-            }}
-            className="gap-2 shadow-sm font-semibold"
-          >
-            <Plus className="size-4" /> Registrar labor de maquinaria
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted border">
+              <button
+                onClick={() => setActiveView("fleet")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeView === "fleet"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Tractor className="size-3.5 text-primary" /> Parque & Labores
+              </button>
+              <button
+                onClick={() => setActiveView("harvester_diagnostics")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  activeView === "harvester_diagnostics"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Gauge className="size-3.5" /> Diagnóstico Cosechadoras & Filtros
+              </button>
+            </div>
+            {activeView === "fleet" && (
+              <Button
+                onClick={() => {
+                  setSelectedMachineForDialog(undefined);
+                  setIsDialogOpen(true);
+                }}
+                className="gap-2 shadow-sm font-semibold text-xs"
+              >
+                <Plus className="size-4" /> Registrar labor
+              </Button>
+            )}
+          </div>
         }
       />
 
-      {/* KPI STAT CARDS: 2 columnas en smartphone */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
+      {activeView === "harvester_diagnostics" ? (
+        <HarvesterDiagnosticsPanel />
+      ) : (
+        <>
+          {/* KPI STAT CARDS: 2 columnas en smartphone */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
         <StatCard
           label="Horas de Labor"
           value={`${number(Math.round(totalHoursWorked * 10) / 10)} h`}
@@ -463,6 +497,8 @@ function Maquinaria() {
           </table>
         </div>
       </Panel>
+      </>
+      )}
 
       {/* MODAL DE REGISTRO */}
       <UsageDialog

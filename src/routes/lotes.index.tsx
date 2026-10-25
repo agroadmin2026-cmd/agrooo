@@ -1,17 +1,28 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, Sprout, TrendingUp, TrendingDown, Wheat, MapPin } from "lucide-react";
+import {
+  ChevronRight,
+  Sprout,
+  TrendingUp,
+  TrendingDown,
+  Wheat,
+  MapPin,
+  Calculator,
+  Layers,
+} from "lucide-react";
 import { useAgro } from "@/lib/agro-store";
 import { formatMoney, number, type LotStatus } from "@/lib/agro-data";
 import { PageHeader, Panel, Pill } from "@/components/agro/ui";
+import { ChacoSeedingCalculator } from "@/components/agro/ChacoSeedingCalculator";
 
 export const Route = createFileRoute("/lotes/")({
   head: () => ({
     meta: [
-      { title: "Lotes, Parcelas y Margen Bruto · AgroAdmin Bolivia" },
+      { title: "Lotes, Parcelas, Chaco Limpio & Siembra · AgroAdmin Bolivia" },
       {
         name: "description",
         content:
-          "Seguimiento de lotes agrícolas, rentabilidad, rendimiento (t/ha) y margen bruto en Bolivianos por hectárea (Bs/ha).",
+          "Subdivisión de chaco limpio, calculadora inteligente de veneno de semillas, amortización de sembradora por campaña y rentabilidad por hectárea.",
       },
     ],
   }),
@@ -27,18 +38,46 @@ const statusTone: Record<LotStatus, "success" | "warning" | "primary" | "neutral
 
 function Lotes() {
   const store = useAgro();
+  const [activeSection, setActiveSection] = useState<"lotes" | "chaco_siembra">("lotes");
   const totalHa = store.lots.reduce((a, l) => a + l.hectares, 0);
 
   return (
     <>
       <PageHeader
-        title="Lotes y Margen Bruto Agrícola"
-        subtitle={`${number(totalHa)} hectáreas bajo manejo en ${store.lots.length} lotes de cultivo`}
+        title="Lotes, Parcelas & Chaco Limpio"
+        subtitle={`${number(totalHa)} hectáreas bajo manejo agronómico en Santa Cruz / Chaco boliviano`}
+        actions={
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted border">
+            <button
+              onClick={() => setActiveSection("lotes")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeSection === "lotes"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Layers className="size-3.5 text-primary" /> Lotes & Margen Bruto
+            </button>
+            <button
+              onClick={() => setActiveSection("chaco_siembra")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeSection === "chaco_siembra"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Calculator className="size-3.5" /> Chaco Limpio, Siembra & Venenos
+            </button>
+          </div>
+        }
       />
 
-      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
-        {store.lots.map((l) => {
-          const summary = store.getLotFinancialSummary(l.id);
+      {activeSection === "chaco_siembra" ? (
+        <ChacoSeedingCalculator />
+      ) : (
+        <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          {store.lots.map((l) => {
+            const summary = store.getLotFinancialSummary(l.id);
           const hasDeliveries = summary && summary.harvestTons > 0;
 
           return (
@@ -155,6 +194,7 @@ function Lotes() {
           );
         })}
       </div>
+      )}
     </>
   );
 }
